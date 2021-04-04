@@ -3,12 +3,11 @@
 ## Web Exploitation
 
 ##### Problem
-
 ###### dont-use-client-side
 > Description
 > Can you break into this super secure portal? https://jupiter.challenges.picoctf.org/problem/29835/ (link) or http://jupiter.challenges.picoctf.org:29835
 
-**Solution**:
+##### Solution
 
 To capture the flag one needs to `Enter valid credentials to proceed`. There is a JavaScript that checks for that.
 
@@ -44,12 +43,12 @@ You just have to follow the white rabbit. First part the string is  `substring(0
 picoCTF{no_clients_plz_7723ce}
 ```
 
-
+##### Problem
 ###### It is my Birthday
 > Description
 > I sent out 2 invitations to all of my friends for my birthday! I'll know if they get stolen because the two invites look similar, and they even have the same md5 hash, but they are slightly different! You wouldn't believe how long it took me to find a collision. Anyway, see if you're invited by submitting 2 PDFs to my website. http://mercury.picoctf.net:48746/
 
-**Solution**:
+##### Solution
 
 This web application is vulrnable to the idea of MD5 collision. Basically, to solve this challenge one needs to send _two_ files that generates the same hash output.
 
