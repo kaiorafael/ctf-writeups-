@@ -5,6 +5,39 @@
 ##### Problem
 ###### Who are you?
 > Description
+> This website can be rendered only by picobrowser, go and catch the flag! https://jupiter.challenges.picoctf.org/problem/50522/ (link) or http://jupiter.challenges.picoctf.org:50522
+
+By running the following `curl` command we can see the page provides the information we are looking at:
+
+```
+curl -v http://jupiter.challenges.picoctf.org:50522/
+```
+Output:
+
+```
+       <div class="jumbotron">
+            <p class="lead"></p>
+            <p><a href="/flag" class="btn btn-lg btn-success btn-block"> Flag</a></p>
+        </div>
+```
+
+##### Solution
+
+To collect the flag, you need to run
+```
+curl -v -A picobrowser http://jupiter.challenges.picoctf.org:50522/flag
+
+```
+**FLAG**
+```
+picoCTF{p1c0_s3cr3t_ag3nt_51414fa7}
+
+```
+
+
+##### Problem
+###### Who are you?
+> Description
 > Let me in. Let me iiiiiiinnnnnnnnnnnnnnnnnnnn http://mercury.picoctf.net:34588/
 
 By visiting the page, one gets the following: "Only people who use the official PicoBrowser are allowed on this site!"
