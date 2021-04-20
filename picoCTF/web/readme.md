@@ -3,7 +3,59 @@
 ## Web Exploitation
 
 ##### Problem
-###### Who are you?
+###### Client-side-again
+> Description
+> Can you break into this super secure portal? https://jupiter.challenges.picoctf.org/problem/6353/ (link) or http://jupiter.challenges.picoctf.org:6353
+
+Visiting the website I have found the following JavaScript
+
+```
+<script type="text/javascript">
+  var _0x5a46=['0a029}','_again_5','this','Password\x20Verified','Incorrect\x20password','getElementById','value','substring','picoCTF{','not_this'];(function(_0x4bd822,_0x2bd6f7){var _0xb4bdb3=function(_0x1d68f6){while(--_0x1d68f6){_0x4bd822['push'](_0x4bd822['shift']());}};_0xb4bdb3(++_0x2bd6f7);}(_0x5a46,0x1b3));var _0x4b5b=function(_0x2d8f05,_0x4b81bb){_0x2d8f05=_0x2d8f05-0x0;var _0x4d74cb=_0x5a46[_0x2d8f05];return _0x4d74cb;};function verify(){checkpass=document[_0x4b5b('0x0')]('pass')[_0x4b5b('0x1')];split=0x4;if(checkpass[_0x4b5b('0x2')](0x0,split*0x2)==_0x4b5b('0x3')){if(checkpass[_0x4b5b('0x2')](0x7,0x9)=='{n'){if(checkpass[_0x4b5b('0x2')](split*0x2,split*0x2*0x2)==_0x4b5b('0x4')){if(checkpass[_0x4b5b('0x2')](0x3,0x6)=='oCT'){if(checkpass[_0x4b5b('0x2')](split*0x3*0x2,split*0x4*0x2)==_0x4b5b('0x5')){if(checkpass['substring'](0x6,0xb)=='F{not'){if(checkpass[_0x4b5b('0x2')](split*0x2*0x2,split*0x3*0x2)==_0x4b5b('0x6')){if(checkpass[_0x4b5b('0x2')](0xc,0x10)==_0x4b5b('0x7')){alert(_0x4b5b('0x8'));}}}}}}}}else{alert(_0x4b5b('0x9'));}}
+</script>
+```
+
+To make somehow clear to read, I used the following project: https://lelinhtinh.github.io/de4js/
+
+##### Solution
+
+Using web I created the array from that code in memory
+```
+var _0x5a46 = ['0a029}', '_again_5', 'this', 'Password Verified', 'Incorrect password', 'getElementById', 'value', 'substring', 'picoCTF{', 'not_this'];
+```
+
+The following `_0x4b5b('0x2')` is a `function _0x4b5b(_0x2d8f05, _0x4b81bb)` that receives a integer and returns a position from `_0x5a46`. So, in this case, this 0x2 will return `substring`.
+After that, I just had to understand the content from `_0x4b5b(xxxx)` and the index `_0x4b5b('0x2')](xxxx, xxxxx)` testing to figure out the order of strings.
+
+```
+    checkpass = document[_0x4b5b('0x0')]('pass')[_0x4b5b('0x1')];
+    split = 0x4;
+    //0 - 8 -> picoCTF{
+    if (checkpass[_0x4b5b('0x2')](0x0, split * 0x2) == _0x4b5b('0x3')) {
+        //7 - 9 -> picoCTF{n
+        if (checkpass[_0x4b5b('0x2')](0x7, 0x9) == '{n') {
+            // 8 - 16 -> picoCTF{not_this
+            if (checkpass[_0x4b5b('0x2')](split * 0x2, split * 0x2 * 0x2) == _0x4b5b('0x4')) {
+                 // 3 - 6 -> picoCTF{not_this
+                if (checkpass[_0x4b5b('0x2')](0x3, 0x6) == 'oCT') {
+                    // 24 - 32 -> 0a029}
+                    if (checkpass[_0x4b5b('0x2')](split * 0x3 * 0x2, split * 0x4 * 0x2) == _0x4b5b('0x5')) {
+                        // 6 - 11
+                        if (checkpass['substring'](0x6, 0xb) == 'F{not') {
+                            // 16 - 24  -> _again_5 -> picoCTF{not_this_again_50a029}
+                            if (checkpass[_0x4b5b('0x2')](split * 0x2 * 0x2, split * 0x3 * 0x2) == _0x4b5b('0x6')) {
+                                // 12 - 16 ->  this
+                                if (checkpass[_0x4b5b('0x2')](0xc, 0x10) == _0x4b5b('0x7')) {
+                                    alert(_0x4b5b('0x8'));
+                                }
+```
+**FLAG**
+```
+picoCTF{not_this_again_50a029}
+```
+
+##### Problem
+###### picobrowser
 > Description
 > This website can be rendered only by picobrowser, go and catch the flag! https://jupiter.challenges.picoctf.org/problem/50522/ (link) or http://jupiter.challenges.picoctf.org:50522
 
